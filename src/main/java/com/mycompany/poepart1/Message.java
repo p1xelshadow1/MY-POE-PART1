@@ -26,7 +26,10 @@ public class Message {
 
     // shared lists: messages sent / stored while the program is running
     public static ArrayList<Message> sentMessages = new ArrayList<>();
+    public static ArrayList<Message> disregardedMessages = new ArrayList<>();
     public static ArrayList<Message> storedMessages = new ArrayList<>();
+    public static ArrayList<String> messageHashes = new ArrayList<>();
+    public static ArrayList<String> messageIDs = new ArrayList<>();
 
     public Message(String messageID, int numMessagesSent, String recipient, String messageText) {
         this.messageID = messageID;
