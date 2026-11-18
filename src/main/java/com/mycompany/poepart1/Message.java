@@ -95,17 +95,27 @@ public class Message {
         switch (choice) {
             case 1:
                 sentMessages.add(this);
+                 recordIDAndHash();
                 return "Message successfully sent.";
             case 2:
+                disregardedMessages.add(this);
+                recordIDAndHash();
                 return "Press 0 to delete the message.";
             case 3:
                 storeMessage();
+                recordIDAndHash();
                 return "Message successfully stored.";
             default:
                 return "Invalid option.";
         }
     }
-
+        // Adds this message's ID and hash to their arrays
+    private void recordIDAndHash() {
+        messageIDs.add(messageID);
+        messageHashes.add(messageHash);
+        
+    }
+    
     // Details of one message in the required order
     public String getDetails() {
         return "Message ID: " + messageID + "\n"
