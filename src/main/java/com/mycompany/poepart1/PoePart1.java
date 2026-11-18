@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 
-package com.mycompany.poepart1;
+package com.mycompany.poepart3;
 
 import java.util.Scanner;
 
