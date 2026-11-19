@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 
-package com.mycompany.poepart3;
+package com.mycompany.poepart1;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class PoePart1 {
@@ -41,7 +42,7 @@ public class PoePart1 {
             System.out.println(newUser.returnLoginStatus(loginUsername, loginPassword));
 
             if (loggedIn) {
-                runQuickChat(scanner);
+                runQuickChat(scanner, firstname + " " + lastname);
             }
         } else {
             System.out.println("Registration failed - please correct your details before logging in.");
@@ -57,7 +58,8 @@ public class PoePart1 {
         }
     }
 
-    public static void runQuickChat(Scanner scanner) {
+    // Main QuickChat menu (Part 2 + the new "Stored Messages" option 4)
+    public static void runQuickChat(Scanner scanner, String senderName) {
         System.out.println("Welcome to QuickChat.");
 
         int maxMessages = 0;
@@ -76,6 +78,7 @@ public class PoePart1 {
             System.out.println("\n1) Send Messages");
             System.out.println("2) Show recently sent messages");
             System.out.println("3) Quit");
+            System.out.println("4) Stored Messages");
             choice = readInt(scanner);
 
             switch (choice) {
@@ -96,12 +99,83 @@ public class PoePart1 {
                 case 3:
                     System.out.println("Total messages sent: " + Message.returnTotalMessages());
                     break;
+                case 4:
+                    storedMessagesMenu(scanner, senderName);
+                    break;
                 default:
-                    System.out.println("Invalid option, please choose 1, 2 or 3.");
+                    System.out.println("Invalid option, please choose 1, 2, 3 or 4.");
             }
         } while (choice != 3);
     }
 
+    // Option 4: works with the arrays, reading stored messages from messages.json first
+    public static void storedMessagesMenu(Scanner scanner, String senderName) {
+        Message.loadStoredMessages();
+
+        int choice;
+        do {
+            System.out.println("\nStored Messages");
+            System.out.println("1) Display sender and recipient of all stored messages");
+            System.out.println("2) Display the longest stored message");
+            System.out.println("3) Search for a message ID");
+            System.out.println("4) Search for all messages stored for a recipient");
+            System.out.println("5) Delete a message using its hash");
+            System.out.println("6) Display a report of all stored messages");
+            System.out.println("7) Back to main menu");
+            choice = readInt(scanner);
+
+            switch (choice) {
+                case 1:
+                    System.out.println(Message.displaySenderAndRecipient(senderName));
+                    break;
+                case 2: {
+                    String longest = Message.longestStoredMessage();
+                    if (longest.isEmpty()) {
+                        System.out.println("No stored messages.");
+                    } else {
+                        System.out.println("Longest stored message: " + longest);
+                    }
+                    break;
+                }
+                case 3: {
+                    System.out.println("Enter the message ID:");
+                    Message found = Message.findByMessageID(scanner.nextLine().trim());
+                    if (found == null) {
+                        System.out.println("Message ID not found.");
+                    } else {
+                        System.out.println("Recipient: " + found.recipient);
+                        System.out.println("Message: " + found.messageText);
+                    }
+                    break;
+                }
+                case 4: {
+                    System.out.println("Enter the recipient's cell number:");
+                    ArrayList<String> results = Message.searchByRecipient(scanner.nextLine().trim());
+                    if (results.isEmpty()) {
+                        System.out.println("No messages found for that recipient.");
+                    } else {
+                        for (String text : results) {
+                            System.out.println("\"" + text + "\"");
+                        }
+                    }
+                    break;
+                }
+                case 5:
+                    System.out.println("Enter the message hash:");
+                    System.out.println(Message.deleteByHash(scanner.nextLine().trim()));
+                    break;
+                case 6:
+                    System.out.println(Message.displayReport(Message.storedMessages));
+                    break;
+                case 7:
+                    break;
+                default:
+                    System.out.println("Invalid option, please choose 1 to 7.");
+            }
+        } while (choice != 7);
+    }
+
+    // Collects the details of one message, then lets the user send, disregard or store it
     public static void enterMessage(Scanner scanner, int messageNumber) {
         // recipient (repeat until valid)
         String recipient;
