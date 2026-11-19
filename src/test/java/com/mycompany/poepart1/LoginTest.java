@@ -4,6 +4,7 @@
  */
 package com.mycompany.poepart1;
 
+import com.mycompany.poepart1.Login;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
