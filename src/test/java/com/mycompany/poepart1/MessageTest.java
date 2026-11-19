@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.poepart1;
+import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,8 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Student
  */
+
+
 public class MessageTest {
-      private Message message1;
+
+    private Message message1;
     private Message message2;
 
     @BeforeEach
@@ -22,6 +26,8 @@ public class MessageTest {
         message2 = new Message("0198765432", 1, "08575975889",
                 "Hi Keegan, did you receive the payment?");
     }
+
+    // ================= Part 2 =================
 
     @Test
     public void testMessageLength_Success() {
@@ -95,6 +101,85 @@ public class MessageTest {
         message1.SentMessage(1);   // sent
         message2.SentMessage(2);   // disregarded, so not counted
         assertEquals(1, Message.returnTotalMessages());
+    }
+
+    // ================= Part 3 =================
+
+    private Message t1, t2, t3, t4, t5;
+
+    // Loads the 5 test messages from the brief into the arrays
+    private void loadTestData() {
+        t1 = new Message("0012345678", 0, "+27834557896", "Did you get the cake?");
+        t2 = new Message("0198765432", 1, "+27838884567",
+                "Where are you? You are late! I have asked you to be on time.");
+        t3 = new Message("0211111111", 2, "+27834484567", "Yohoooo, I am at your gate.");
+        t4 = new Message("0838884567", 3, "0838884567", "It is dinner time!");
+        t5 = new Message("0511111111", 4, "+27838884567", "Ok, I am leaving without you.");
+
+        t1.SentMessage(1);   // Sent
+        t2.SentMessage(3);   // Stored
+        t3.SentMessage(2);   // Disregard
+        t4.SentMessage(1);   // Sent
+        t5.SentMessage(3);   // Stored
+    }
+
+    @Test
+    public void testSentArrayPopulated() {
+        loadTestData();
+        assertEquals("Did you get the cake?", Message.sentMessages.get(0).messageText);
+        assertEquals("It is dinner time!", Message.sentMessages.get(1).messageText);
+        assertEquals(2, Message.sentMessages.size());
+        assertEquals(5, Message.messageIDs.size());
+        assertEquals(5, Message.messageHashes.size());
+    }
+
+    @Test
+    public void testLongestMessage() {
+        loadTestData();
+        assertEquals("Where are you? You are late! I have asked you to be on time.",
+                Message.longestStoredMessage());
+    }
+
+    @Test
+    public void testSearchByMessageID() {
+        loadTestData();
+        assertEquals("It is dinner time!", Message.searchByMessageID("0838884567"));
+    }
+
+    @Test
+    public void testSearchByRecipient() {
+        loadTestData();
+        assertEquals(Arrays.asList(
+                "Where are you? You are late! I have asked you to be on time.",
+                "Ok, I am leaving without you."),
+                Message.searchByRecipient("+27838884567"));
+    }
+
+    @Test
+    public void testDeleteByHash() {
+        loadTestData();
+        assertEquals("Message: \"Where are you? You are late! I have asked you to be on time.\" successfully deleted.",
+                Message.deleteByHash("01:1:WHERETIME"));
+        assertEquals(1, Message.storedMessages.size());
+    }
+
+    @Test
+    public void testDisplayReport() {
+        loadTestData();
+        String expected =
+                "Message ID: 0012345678\nMessage Hash: 00:0:DIDCAKE\n"
+                + "Recipient: +27834557896\nMessage: Did you get the cake?\n\n"
+                + "Message ID: 0838884567\nMessage Hash: 08:3:ITTIME\n"
+                + "Recipient: 0838884567\nMessage: It is dinner time!\n\n";
+        assertEquals(expected, Message.displayReport(Message.sentMessages));
+    }
+
+    @Test
+    public void testReadJSONIntoArray() {
+        loadTestData();               // stores messages 2 and 5 in messages.json
+        Message.loadStoredMessages(); // read them back from the file
+        assertEquals(2, Message.storedMessages.size());
+        assertEquals("Ok, I am leaving without you.", Message.storedMessages.get(1).messageText);
     }
 }
 
